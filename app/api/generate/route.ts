@@ -16,16 +16,16 @@ export async function POST(req: Request) {
     const prompt = `You are an expert social media content creator. Create viral content for the topic: "${topic}".
     Provide the output in clean, structured format with exact headers:
 
-    ### 🪝 Hook Options
+    🪝 Hook Options
     - Give 3-5 catchy hook variations.
 
-    ### 📌 Hashtags
+  📌 Hashtags
     - Provide relevant high-reach and niche hashtags.
 
-    ### 🎬 Full Script
+    🎬 Full Script
     - Detail line-by-line visual & audio script.
 
-    ### 📣 Call To Action (CTA)
+    📣 Call To Action (CTA)
     - Provide strong CTAs to drive engagement and followers.`;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
