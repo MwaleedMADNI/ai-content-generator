@@ -8,7 +8,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ result: 'API Key missing in environment variables.' });
     }
@@ -28,25 +28,27 @@ export async function POST(req: Request) {
     ### 📣 Call To Action (CTA)
     - Provide strong CTAs to drive engagement and followers.`;
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3-8b-8192',
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      }
+    );
 
     const data = await response.json();
 
     if (data.error) {
-      return NextResponse.json({ result: `Groq API Error: ${data.error.message}` });
+      return NextResponse.json({ result: `Gemini API Error: ${data.error.message}` });
     }
 
-    const result = data.choices?.[0]?.message?.content || 'No content generated from API.';
+    const result =
+      data.candidates?.[0]?.content?.parts?.[0]?.text || 'No content generated from API.';
 
     return NextResponse.json({ result });
   } catch (error: any) {
