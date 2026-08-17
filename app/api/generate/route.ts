@@ -8,7 +8,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ result: 'API Key missing in environment variables.' });
     }
