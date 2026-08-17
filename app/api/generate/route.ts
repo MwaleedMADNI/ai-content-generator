@@ -1,34 +1,41 @@
-import Groq from 'groq-sdk';
 import { NextResponse } from 'next/server';
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: Request) {
   try {
     const { topic } = await req.json();
 
-    if (!topic) {
-      return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
-    }
+    const prompt = `You are an expert social media content creator. Create viral content for the topic: "${topic}".
+    Provide the output in clean, structured format with exact headers:
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: `Aap ek social media expert hain. Topic: "${topic}" ke liye 3 viral video hooks, script outline aur relevant hashtags generate karein.`,
-        },
-      ],
-      model: 'llama-3.3-70b-versatile',
+    ### 🪝 Hook Options
+    - Give 3-5 catchy hook variations.
+
+    ### 📌 Hashtags
+    - Provide relevant high-reach and niche hashtags.
+
+    ### 🎬 Full Script
+    - Detail line-by-line visual & audio script.
+
+    ### 📣 Call To Action (CTA)
+    - Provide strong CTAs to drive engagement and followers.`;
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+      }),
     });
 
-    const output = completion.choices[0]?.message?.content || 'No output generated.';
+    const data = await response.json();
+    const result = data.choices[0]?.message?.content || 'No content generated.';
 
-    return NextResponse.json({ output });
-  } catch (error: any) {
-    console.error('Groq API Error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to generate content' },
-      { status: 500 }
-    );
+    return NextResponse.json({ result });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to generate content' }, { status: 500 });
   }
 }

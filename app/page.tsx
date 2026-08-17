@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 
 export default function Home() {
@@ -7,14 +6,16 @@ export default function Home() {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  const handleGenerate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!topic.trim()) return;
+    if (!topic) return;
 
     setLoading(true);
-    setOutput('');
     setCopied(false);
+    setSaved(false);
+    setOutput('');
 
     try {
       const res = await fetch('/api/generate', {
@@ -24,11 +25,7 @@ export default function Home() {
       });
 
       const data = await res.json();
-      if (res.ok) {
-        setOutput(data.output);
-      } else {
-        setOutput(`Error: ${data.error}`);
-      }
+      setOutput(data.result || 'No content generated.');
     } catch (err) {
       setOutput('Failed to generate content. Please try again.');
     } finally {
@@ -42,71 +39,67 @@ export default function Home() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const saveToLibrary = () => {
+    const existing = JSON.parse(localStorage.getItem('saved_scripts') || '[]');
+    localStorage.setItem('saved_scripts', JSON.stringify([output, ...existing]));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Glow Effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[300px] h-[300px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+    <main className="min-h-screen p-8 max-w-4xl mx-auto">
+      <div className="text-center my-8">
+        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+          AI Social Media Content Studio
+        </h1>
+        <p className="text-slate-400 mt-2">
+          Topic daalein aur Viral Hooks, Hashtags, Script aur CTA ek click mein hasil karein!
+        </p>
+      </div>
 
-      <div className="max-w-3xl w-full z-10 space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-3">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
-            AI Social Media Content Generator
-          </h1>
-          <p className="text-slate-400 text-lg">
-            Topic daalein aur viral hooks + script outline seconds mein hasil karein!
-          </p>
-        </div>
+      <form onSubmit={handleSubmit} className="flex gap-4 mb-8">
+        <input
+          type="text"
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder="e.g., Real Estate Marketing, Python Tips, AI Tools..."
+          className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition disabled:opacity-50"
+        >
+          {loading ? 'Generating...' : 'Generate Content'}
+        </button>
+      </form>
 
-        {/* Form Card */}
-        <form onSubmit={handleGenerate} className="flex flex-col sm:flex-row gap-3 bg-slate-900/60 p-3 rounded-2xl border border-slate-800 backdrop-blur-xl shadow-2xl">
-          <input
-            type="text"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            placeholder="e.g., Real Estate Marketing, Python Tips..."
-            className="flex-1 bg-transparent px-5 py-3 text-slate-100 placeholder-slate-500 focus:outline-none"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium px-8 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-purple-500/25"
-          >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-                Generating...
-              </span>
-            ) : (
-              'Generate'
-            )}
-          </button>
-        </form>
-
-        {/* Output Card */}
-        {output && (
-          <div className="relative bg-slate-900/80 rounded-2xl p-6 border border-slate-800 backdrop-blur-xl shadow-2xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-purple-400">
-                Generated Script
-              </span>
+      {output && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative">
+          <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+            <span className="text-xs font-semibold uppercase text-purple-400 tracking-wider">
+              Generated Result
+            </span>
+            <div className="flex gap-2">
               <button
                 onClick={copyToClipboard}
-                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition"
+                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition"
               >
-                {copied ? '✓ Copied!' : '📋 Copy Script'}
+                {copied ? '✓ Copied!' : '📋 Copy All'}
+              </button>
+              <button
+                onClick={saveToLibrary}
+                className="text-xs bg-purple-900/50 hover:bg-purple-800/50 text-purple-300 border border-purple-700/50 px-3 py-1.5 rounded-lg transition"
+              >
+                {saved ? '✓ Saved!' : '💾 Save Script'}
               </button>
             </div>
-            <div className="whitespace-pre-wrap text-slate-300 leading-relaxed font-sans text-sm md:text-base">
-              {output}
-            </div>
           </div>
-        )}
-      </div>
+          <div className="whitespace-pre-wrap text-slate-200 leading-relaxed font-sans">
+            {output}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
