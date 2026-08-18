@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function Home() {
   const [topic, setTopic] = useState('');
@@ -95,8 +97,39 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="whitespace-pre-wrap text-slate-200 leading-relaxed font-sans">
-            {output}
+          <div className="text-slate-200 leading-relaxed font-sans">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                h1: ({ ...props }) => (
+                  <h1 className="text-2xl font-bold text-purple-300 mt-6 mb-3 first:mt-0" {...props} />
+                ),
+                h2: ({ ...props }) => (
+                  <h2 className="text-xl font-bold text-purple-300 mt-6 mb-3 first:mt-0" {...props} />
+                ),
+                h3: ({ ...props }) => (
+                  <h3 className="text-lg font-bold text-pink-400 mt-6 mb-3 first:mt-0" {...props} />
+                ),
+                p: ({ ...props }) => (
+                  <p className="mb-3 text-slate-200" {...props} />
+                ),
+                ul: ({ ...props }) => (
+                  <ul className="list-disc list-inside mb-4 space-y-1.5 text-slate-200" {...props} />
+                ),
+                ol: ({ ...props }) => (
+                  <ol className="list-decimal list-inside mb-4 space-y-1.5 text-slate-200" {...props} />
+                ),
+                li: ({ ...props }) => (
+                  <li className="ml-2" {...props} />
+                ),
+                strong: ({ ...props }) => (
+                  <strong className="font-semibold text-white" {...props} />
+                ),
+                hr: () => <hr className="border-slate-700 my-4" />,
+              }}
+            >
+              {output}
+            </ReactMarkdown>
           </div>
         </div>
       )}
