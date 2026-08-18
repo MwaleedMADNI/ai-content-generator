@@ -23,8 +23,15 @@ export async function POST(req: Request) {
     ### 📌 Hashtags
     - Provide relevant high-reach and niche hashtags.
 
-    ### 🎬 Full Script
-    - Detail line-by-line visual & audio script.
+    ### 📝 Platform Captions
+    Write one unique, platform-appropriate caption for each of the following, matching that platform's tone and style:
+    - **Instagram**: engaging, emoji-friendly caption (2-4 sentences)
+    - **Facebook**: slightly longer, conversational caption
+    - **LinkedIn**: professional, value-driven caption
+    - **TikTok**: short, punchy, trend-aware caption
+
+    ### 🎬 Instagram Reel Scripts
+    Provide exactly 3 different, unique Instagram Reel scripts for this topic. Label them clearly as "Script 1", "Script 2", and "Script 3". Each script must have a different angle/approach and include line-by-line visual & audio direction.
 
     ### 📣 Call To Action (CTA)
     - Provide strong CTAs to drive engagement and followers.`;
