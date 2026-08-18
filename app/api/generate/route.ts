@@ -8,11 +8,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    // Encoded API Key to ensure seamless fallback without GitHub secret block
-    const encodedKey = "QVEuQWI4Uk42THhKclppRklDMk9YSW1VV3hyRkU0Z0VuV3hwMUFSTFJoUnBkTUhhNU1hMlE=";
-    const decodedKey = typeof atob === 'function' ? atob(encodedKey) : Buffer.from(encodedKey, 'base64').toString('utf-8');
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY;
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY || decodedKey;
+    if (!apiKey) {
+      return NextResponse.json({ result: 'API Key missing in environment variables.' });
+    }
 
     const prompt = `You are an expert social media content creator. Create viral content for the topic: "${topic}".
     Provide the output in clean, structured format with exact headers:
