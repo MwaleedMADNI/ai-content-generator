@@ -16,7 +16,6 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 backdrop-blur-lg bg-slate-950/80 border-b border-slate-800">
       <div className="max-w-5xl mx-auto flex justify-between items-center px-6 py-4">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="text-2xl">✨</span>
           <span className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 group-hover:from-pink-500 group-hover:to-purple-400 transition-all">
             ContentStudio AI
           </span>

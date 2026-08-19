@@ -3,7 +3,6 @@ export default function Footer() {
     <footer className="border-t border-slate-800 mt-20">
       <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-lg">✨</span>
           <span className="text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
             ContentStudio AI
           </span>
